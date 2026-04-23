@@ -1,0 +1,35 @@
+Theme: Coffe-Beans
+	Colors
+		Black: 		110d08
+		Brown 1:	ae6a24
+		off-White 1:	d0ba97
+		off-White 2:	e0d9d5
+		Brown 2:	b98f4e
+		Brown 3: 	854719
+		Font: 		Agave Nerd Font
+	UI-Colors
+		Dark:
+			Main:		Black
+			Text:		off-White 2
+			Secondary 1:	Brown 1
+			Secondary 2:	Brown 2
+			Secondary 3:	Brown 3
+		Light:
+			Main: 		off-White 2
+			Text:		Black
+			Secondary 1:	Brown 1
+			Secondary 2:	Brown 3
+			Secondary 3:	Brown 2
+	Steps:
+		Kitty				[x]
+		Hyprland			[x]
+		wallpaper			[x]
+		gtk				[x]
+		qt				[ ]
+		ncmpcpp & mpd			[x]
+		dark-light mode switcher	[x]
+		quickshell			[ ]
+		greeterd			[ ]
+		install script			[ ]
+		notification Center		[ ]
+		jump to develish

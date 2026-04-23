@@ -1,0 +1,21 @@
+song_list_format = {%a - }{%t}|{$8%f$9}$R{$3%l$9}
+alternative_header_first_line_format = $b$(180)$aqqu$/a$9 {%t}|{%f} $(180)$atqq$/a$9$/b
+alternative_header_second_line_format = {{%a$/b}{$(180) -$9 %b}}
+
+song_columns_list_format = (30)[254]{t}  (10)[137]{NE}  (30)[254]{a}  (20)[137]{b}
+
+playlist_display_mode = columns
+progressbar_look = -X
+user_interface = alternative
+
+colors_enabled = yes
+empty_tag_color = 130
+header_window_color = 137
+volume_color = 137
+main_window_color = 180
+color1 = 180
+color2 = 223
+progressbar_color = 222
+progressbar_elapsed_color = 137
+alternative_ui_separator_color = 222
+window_border_color = 180
