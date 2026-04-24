@@ -5,103 +5,88 @@ import QtQuick.Layouts
 import "../../Constants.js" as Const
 
 Rectangle {
+        height: 40
         width: mainRow.implicitWidth
-        MouseArea {
+        radius: height
+        color: Const.color.background
+        clip: true
+        Behavior on width { NumberAnimation { duration: 150; easing.type: Qt.InQuad } }
+        HoverHandler { id: mainHoverHandler }
+        RowLayout {
+                id: mainRow
                 anchors.fill: parent
-                acceptedButtons: Qt.MiddleButton | Qt.RightButton
-                onClicked: (mouse)=> {
-                        if (mouse.button == Qt.MiddleButton)
-                        visibility = !visibility 
-
+                layoutDirection: Qt.RightToLeft
+                Rectangle {
+                        height: 30
+                        width: 30
+                        radius: width/2
+                        color: Const.color.accent3
+                        Layout.rightMargin: 5
+                        Layout.leftMargin: mainHoverHandler.hovered ? 0 : 5
+                        MouseArea {
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {  Pipewire.defaultAudioSink.audio.muted = !Pipewire.defaultAudioSink.audio.muted }
+                                scrollGestureEnabled: true
+                                onWheel: (wheel)=> { Pipewire.defaultAudioSink.audio.volume = Pipewire.defaultAudioSink.audio.volume + (0.05 * wheel.angleDelta.y/120) }
+                        }
+                        Text {
+                                text: Pipewire.defaultAudioSink.audio.muted ? "󰝟"
+                                : ( currentVolume > 66 ) ? "󰕾"
+                                : ( currentVolume > 33 ) ? "󰖀"
+                                : "󰕿"
+                                color: Const.color.accent2
+                                font.family: Const.font.font1
+                                font.pointSize: 14
+                                anchors.centerIn: parent
+                        }
+                }
+                Rectangle {
+                        visible: mainHoverHandler.hovered
+                        height: 32
+                        width: 3
+                        radius: width/2
+                        color: Const.color.accent2
+                }
+                Repeater {
+                        model: appAudio.linkGroups
+                        Rectangle {
+                                visible: mainHoverHandler.hovered
+                                height: 30
+                                width: 30
+                                radius: width/2
+                                color: Const.color.accent3
+                                Layout.leftMargin: 5
+                                MouseArea {
+                                        anchors.fill: parent
+                                        cursorShape: Qt.PointingHandCursor
+                                        onClicked: {  modelData.source.audio.muted = !modelData.source.audio.muted }
+                                        scrollGestureEnabled: true
+                                        onWheel: (wheel)=> { modelData.source.audio.volume = modelData.source.audio.volume + (0.05 * wheel.angleDelta.y/120) }
+                                }
+                                Text {
+                                        text: modelData.source.audio.muted ? "󰝟"
+                                        : ( secondaryVolume > 66 ) ? "󰕾"
+                                        : ( secondaryVolume > 33 ) ? "󰖀"
+                                        : "󰕿"
+                                        color: Const.color.accent2
+                                        font.family: Const.font.font1
+                                        font.pointSize: 14
+                                        anchors.centerIn: parent
+                                }
+                                PwObjectTracker {
+                                        objects: [ modelData.source ]
+                                }
+                                property int secondaryVolume: Math.round( modelData.source.audio.volume * 100 )
+                        }
                 }
         }
-        height: 40
-        anchors.verticalCenter: parent.verticalCenter
-        radius: height/2
-        color: Const.color.background
+        property int currentVolume: Math.round( Pipewire.defaultAudioSink.audio.volume * 100 )
         PwObjectTracker {
                 objects: Pipewire.defaultAudioSink
         }
         PwNodeLinkTracker {
-                id: audioAppOutputTracker
+                id: appAudio
                 node: Pipewire.defaultAudioSink
         }
-        property bool visibility: false
-        readonly property int currentVolume : Math.round( Pipewire.defaultAudioSink.audio.volume * 100)
-        RowLayout {
-                id: mainRow
-                anchors.fill: parent
-                spacing: 5
-                Item {
-                        width: 5
-                }
-                Repeater {
-                        model:  audioAppOutputTracker.linkGroups
-                        Rectangle {
-                                visible: visibility
-                                readonly property int secondaryVolume : Math.round( modelData.source.audio.volume * 100)
-                                height: 23
-                                width: height
-                                radius: 7
-                                color: Const.color.accent3
-                                Text {
-                                        text: modelData.source.audio.muted ? "󰝟"
-                                        : ( secondaryVolume >= 66) ? "󰕾"
-                                        : ( secondaryVolume >= 33) ? "󰖀"
-                                        : "󰕿"
-                                        anchors.left: parent.left
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        anchors.leftMargin: 5
-                                        color: Const.color.accent2
-                                        font.family: Const.font.font1
-                                        font.pointSize: 12
-                                }
-                                MouseArea {
-                                        anchors.fill: parent
-                                        onClicked: (mouse) => {
-                                                modelData.source.audio.muted = !modelData.source.audio.muted
-                                        }
-                                }
-                                PwObjectTracker {
-                                        objects: [modelData.source]
-                                }
-                        }
-                }
-                Rectangle {
-
-                        visible: visibility
-                        width: 2
-                        height: 27
-                        color: Const.color.accent2
-                        radius: 4
-                }
-                Rectangle {
-                        height: 25
-                        width: height
-                        radius: 7
-                        color: Const.color.accent3
-                        Text {
-                                text: Pipewire.defaultAudioSink.audio.muted ? "󰝟"
-                                : ( currentVolume >= 66) ? "󰕾"
-                                : ( currentVolume >= 33) ? "󰖀"
-                                : "󰕿"
-                                anchors.left: parent.left
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.leftMargin: 5
-                                color: Const.color.accent2
-                                font.family: Const.font.font1
-                                font.pointSize: 14
-                        }
-                        MouseArea {
-                                anchors.fill: parent
-                                onClicked: (mouse) => {
-                                        Pipewire.defaultAudioSink.audio.muted = !Pipewire.defaultAudioSink.audio.muted
-                                }
-                        }
-                }
-                Item {
-                        width: 5
-                }
-        }
-
 }
