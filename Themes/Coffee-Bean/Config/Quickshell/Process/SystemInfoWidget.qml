@@ -6,9 +6,10 @@ import QtQuick
 
 FileView {
         id: root
-        path: "./metrics.json"
+        path: Qt.resolvedUrl("./SystemFile/metrics.json").toString().replace("file://", "")
         watchChanges: true
         onFileChanged: reload()
+        Component.onCompleted: reload()
 
         property alias settings: metrics
         JsonAdapter {

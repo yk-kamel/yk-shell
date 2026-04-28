@@ -1,0 +1,14 @@
+{
+  "cpu_usage": 2,
+  "cpu_clock": 0,
+  "ram_total": 15.516983,
+  "ram_used": 2.3383865,
+  "ram_free": 12.819965,
+  "ram_usage": 15,
+  "gpu_vendor": "NVIDIA Corporation",
+  "gpu_clock": 360,
+  "vram_total": 4,
+  "vram_used": 0.84375,
+  "vram_free": 3.15625,
+  "vram_usage": 21
+}
