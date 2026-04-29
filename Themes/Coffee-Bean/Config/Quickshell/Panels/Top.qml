@@ -17,8 +17,13 @@ PanelWindow {
                         anchors.left: parent.left
                         anchors.leftMargin: 10
                 }
-                Workspace {
+                SystemInfo {
+                        id: systemInfo
                         anchors.left: clock.right
+                        anchors.leftMargin: 10
+                }
+                Workspace {
+                        anchors.left: systemInfo.right
                         anchors.leftMargin: 10
                 }
                 Island {
