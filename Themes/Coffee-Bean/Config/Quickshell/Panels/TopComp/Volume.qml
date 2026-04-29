@@ -2,6 +2,7 @@ import Quickshell
 import QtQuick
 import Quickshell.Services.Pipewire
 import QtQuick.Layouts
+import QtQuick.Controls
 import "../../Constants.js" as Const
 
 Rectangle {
@@ -29,7 +30,15 @@ Rectangle {
                                 onClicked: {  Pipewire.defaultAudioSink.audio.muted = !Pipewire.defaultAudioSink.audio.muted }
                                 scrollGestureEnabled: true
                                 onWheel: (wheel)=> { Pipewire.defaultAudioSink.audio.volume = Pipewire.defaultAudioSink.audio.volume + (0.05 * wheel.angleDelta.y/120) }
+                                
                         }
+                        HoverHandler { id: childHover }
+                        ToolTip {
+                                x: -width -8
+                                visible: childHover.hovered
+                                text:  currentVolume + "%"
+                                delay: 500
+                }
                         Text {
                                 text: Pipewire.defaultAudioSink.audio.muted ? "󰝟"
                                 : ( currentVolume > 66 ) ? "󰕾"
@@ -63,6 +72,13 @@ Rectangle {
                                         onClicked: {  modelData.source.audio.muted = !modelData.source.audio.muted }
                                         scrollGestureEnabled: true
                                         onWheel: (wheel)=> { modelData.source.audio.volume = modelData.source.audio.volume + (0.05 * wheel.angleDelta.y/120) }
+                                }
+                                HoverHandler { id: grandChildHover}
+                                ToolTip {
+                                        x: -width -8
+                                        visible: grandChildHover.hovered
+                                        text: modelData.source.properties["media.name"] + " | " +  secondaryVolume + "%"
+                                        delay: 500
                                 }
                                 Text {
                                         text: modelData.source.audio.muted ? "󰝟"

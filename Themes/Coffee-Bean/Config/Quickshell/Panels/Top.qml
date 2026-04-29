@@ -29,7 +29,13 @@ PanelWindow {
                 Island {
                         anchors.horizontalCenter: parent.horizontalCenter
                 }
+                AudioIO {
+                        id: audioIO
+                        anchors.right: volume.left
+                        anchors.rightMargin: 10
+                }
                 Volume {
+                        id: volume
                         anchors.right: parent.right
                         anchors.rightMargin: 10
                 }

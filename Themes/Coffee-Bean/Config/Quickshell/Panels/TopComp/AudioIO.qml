@@ -2,6 +2,7 @@ import Quickshell
 import QtQuick
 import Quickshell.Services.Pipewire
 import QtQuick.Layouts
+import QtQuick.Controls
 import "../../Constants.js" as Const
 
 Rectangle {
@@ -16,77 +17,78 @@ Rectangle {
                 id: mainRow
                 anchors.fill: parent
                 layoutDirection: Qt.RightToLeft
-                Rectangle {
-                        height: 30
-                        width: 30
-                        radius: width/2
-                        color: Const.color.accent3
-                        Layout.rightMargin: 5
-                        Layout.leftMargin: mainHoverHandler.hovered ? 0 : 5
-                        MouseArea {
-                                anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: {  Pipewire.defaultAudioSink.audio.muted = !Pipewire.defaultAudioSink.audio.muted }
-                                scrollGestureEnabled: true
-                                onWheel: (wheel)=> { Pipewire.defaultAudioSink.audio.volume = Pipewire.defaultAudioSink.audio.volume + (0.05 * wheel.angleDelta.y/120) }
-                        }
-                        Text {
-                                text: Pipewire.defaultAudioSink.audio.muted ? "󰝟"
-                                : ( currentVolume > 66 ) ? "󰕾"
-                                : ( currentVolume > 33 ) ? "󰖀"
-                                : "󰕿"
-                                color: Const.color.accent2
-                                font.family: Const.font.font1
-                                font.pointSize: 14
-                                anchors.centerIn: parent
+                Repeater {
+                        model: Pipewire.nodes.values.filter(node => node.type === PwNodeType.AudioSink)
+                        Rectangle {
+                                PwObjectTracker { objects: [modelData] }
+                                visible: (mainHoverHandler.hovered || Pipewire.preferredDefaultAudioSink == modelData )
+                                height: 30
+                                width: 30
+                                radius: width/2
+                                color: Const.color.accent3
+                                Layout.leftMargin: 5
+                                Layout.rightMargin: 5
+                                TapHandler {
+                                        cursorShape: Qt.PointingHandCursor
+                                        onTapped: { 
+                                                Pipewire.preferredDefaultAudioSink = modelData 
+                                                for (var key in modelData.properties) { console.log(key + ": " + modelData.properties[key]); }
+                                        }
+                                }
+                                HoverHandler { id: childHover }
+                                ToolTip {
+                                        x: -width -8
+                                        visible: childHover.hovered
+                                        text: modelData.properties["node.nick"]
+                                        delay: 1000
+                                }
+                                Text {
+                                        text: (Pipewire.preferredDefaultAudioSink == modelData ) ? "󰋌" : "󰋋"
+                                        color: Const.color.accent2
+                                        font.family: Const.font.font1
+                                        font.pointSize: 14
+                                        anchors.centerIn: parent
+                                }
                         }
                 }
                 Rectangle {
-                        visible: mainHoverHandler.hovered
                         height: 32
                         width: 3
                         radius: width/2
                         color: Const.color.accent2
                 }
                 Repeater {
-                        model: appAudio.linkGroups
+                        model: Pipewire.nodes.values.filter(node => node.type === PwNodeType.AudioSource)
                         Rectangle {
-                                visible: mainHoverHandler.hovered
+                                PwObjectTracker { objects: [modelData] }
+                                visible: (mainHoverHandler.hovered || Pipewire.defaultAudioSource.id == modelData.id )
                                 height: 30
                                 width: 30
                                 radius: width/2
                                 color: Const.color.accent3
                                 Layout.leftMargin: 5
-                                MouseArea {
-                                        anchors.fill: parent
+                                Layout.rightMargin: 5
+                                TapHandler {
                                         cursorShape: Qt.PointingHandCursor
-                                        onClicked: {  modelData.source.audio.muted = !modelData.source.audio.muted }
-                                        scrollGestureEnabled: true
-                                        onWheel: (wheel)=> { modelData.source.audio.volume = modelData.source.audio.volume + (0.05 * wheel.angleDelta.y/120) }
+                                        onTapped: { 
+                                                Pipewire.preferredDefaultAudioSource = modelData 
+                                        }
+                                }
+                                HoverHandler { id: childHover }
+                                ToolTip {
+                                        x: -width -8
+                                        visible: childHover.hovered
+                                        text: modelData.properties["node.nick"]
+                                        delay: 1000
                                 }
                                 Text {
-                                        text: modelData.source.audio.muted ? "󰝟"
-                                        : ( secondaryVolume > 66 ) ? "󰕾"
-                                        : ( secondaryVolume > 33 ) ? "󰖀"
-                                        : "󰕿"
+                                        text: ( Pipewire.defaultAudioSource.id == modelData.id ) ? "󰍬" : "󰍮"
                                         color: Const.color.accent2
                                         font.family: Const.font.font1
                                         font.pointSize: 14
                                         anchors.centerIn: parent
                                 }
-                                PwObjectTracker {
-                                        objects: [ modelData.source ]
-                                }
-                                property int secondaryVolume: Math.round( modelData.source.audio.volume * 100 )
                         }
                 }
-        }
-        property int currentVolume: Math.round( Pipewire.defaultAudioSink.audio.volume * 100 )
-        PwObjectTracker {
-                objects: Pipewire.defaultAudioSink
-        }
-        PwNodeLinkTracker {
-                id: appAudio
-                node: Pipewire.defaultAudioSink
         }
 }
